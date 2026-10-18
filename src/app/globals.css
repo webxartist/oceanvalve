@@ -1,0 +1,190 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
+
+@import "tailwindcss";
+
+:root {
+  --butterfly-turquoise: #66d4c8;
+  --butterfly-blue: #3c4592;
+  --butterfly-violet: #7a4cc2;
+  --butterfly-gold: #f4b45c;
+  --butterfly-orange: #f59a45;
+
+  --butterfly-navy: #151a3a;
+  --butterfly-dark: #0d1026;
+
+  --butterfly-white: #ffffff;
+  --butterfly-soft: #f8fafc;
+  --butterfly-gray: #687086;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+
+  background: var(--butterfly-white);
+  color: var(--butterfly-navy);
+
+  font-family: "DM Sans", sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--butterfly-blue);
+  color: white;
+}
+
+/* -------------------------------- */
+/* Typography */
+/* -------------------------------- */
+
+.font-display {
+  font-family: "Playfair Display", serif;
+}
+
+/* -------------------------------- */
+/* Brand gradients */
+/* -------------------------------- */
+
+.gradient-text {
+  background: linear-gradient(
+    90deg,
+    var(--butterfly-turquoise),
+    var(--butterfly-blue),
+    var(--butterfly-violet)
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-brand {
+  background: linear-gradient(
+    135deg,
+    var(--butterfly-turquoise),
+    var(--butterfly-blue),
+    var(--butterfly-violet)
+  );
+}
+
+/* -------------------------------- */
+/* Layout */
+/* -------------------------------- */
+
+.container-butterfly {
+  width: min(1280px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.section-padding {
+  padding-top: 120px;
+  padding-bottom: 120px;
+}
+
+/* -------------------------------- */
+/* Image behavior */
+/* -------------------------------- */
+
+img {
+  max-width: 100%;
+}
+
+/* -------------------------------- */
+/* Premium scrollbar */
+/* -------------------------------- */
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f6f9;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    var(--butterfly-turquoise),
+    var(--butterfly-blue),
+    var(--butterfly-violet)
+  );
+}
+
+/* -------------------------------- */
+/* Mobile */
+/* -------------------------------- */
+
+@media (max-width: 768px) {
+  .container-butterfly {
+    width: min(100% - 28px, 1280px);
+  }
+
+  .section-padding {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+}
+
+/* Keep the public-site navigation out of the private admin interface. */
+body:has([data-admin-page="true"]) > header,
+body:has([data-admin-page="true"]) > footer {
+  display: none !important;
+}
+body:has([data-admin-page="true"]) > div {
+  min-height: 100vh;
+}
+
+/* Ocean Valves / OVETA theme */
+:root {
+  --butterfly-navy: #082338;
+  --butterfly-blue: #087c91;
+  --butterfly-turquoise: #55d8e5;
+  --butterfly-violet: #0b5269;
+}
+.logo-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+.logo-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: logo-scroll 32s linear infinite reverse;
+}
+.logo-marquee:hover .logo-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes logo-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee-track {
+    animation: none;
+  }
+}
