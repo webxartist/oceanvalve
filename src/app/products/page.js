@@ -58,7 +58,7 @@ export default async function ProductsPage() {
     <main className="min-h-screen bg-[#f4f7f9] pb-20 pt-36">
       <div className="container-butterfly">
         <p className="text-xs font-bold uppercase tracking-[.25em] text-cyan-700">
-          OVETA product range
+          OCEAN product range
         </p>
 
         <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight text-[#082338] md:text-6xl">
