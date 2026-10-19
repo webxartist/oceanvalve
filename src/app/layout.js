@@ -3,6 +3,7 @@ import Navbar from "@/Components/Navbar";
 import Footer from "@/Components/Footer";
 import SmoothScroll from "@/Components/SmoothScroll";
 import SiteStructuredData from "@/Components/SiteStructuredData";
+import FloatingContactButtons from "@/Components/FloatingContactButtons";
 
 export const metadata = {
   metadataBase: new URL(
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
         <SmoothScroll />
         <Navbar />
         <div className="flex-1">{children}</div>
+        <FloatingContactButtons />
         <Footer />
       </body>
     </html>

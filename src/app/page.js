@@ -165,7 +165,7 @@ export default async function HomePage() {
     )
   ) {
     settings.heroDescription =
-      "OVETA industrial valves and flow-control solutions engineered for demanding applications.";
+      "OCEAN industrial valves and flow-control solutions engineered for demanding applications.";
   }
 
   if (settings.heroImage === "/hero-home.jpg" || !settings.heroImage) {
@@ -247,7 +247,7 @@ export default async function HomePage() {
 
               <p className="mt-4 max-w-2xl leading-7 text-slate-600">
                 Explore valves, flow-control products and pipeline accessories
-                from the OVETA catalogue.
+                from the OCEAN catalogue.
               </p>
             </div>
 
