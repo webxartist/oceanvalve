@@ -1,15 +1,387 @@
 "use client";
-import {useEffect,useState} from "react";import Link from "next/link";import {useRouter} from "next/navigation";import {ArrowLeft,Plus,Save,Trash2,Upload,Eye,EyeOff} from "lucide-react";
-const blank={title:"",slug:"",category:"Industrial Valves",summary:"",description:"",image:"",images:[],standards:"",materials:"",rating:"",sizes:"",seoTitle:"",seoDescription:"",published:true,sortOrder:0};
-const fields=[["title","Product name"],["slug","URL slug"],["category","Category"],["summary","Short description"],["description","Full description"],["image","Primary image URL"],["standards","Standards"],["materials","Materials"],["rating","Pressure / rating"],["sizes","Available sizes"],["seoTitle","SEO title"],["seoDescription","SEO description"]];
-export default function AdminProductsPage(){const router=useRouter();const[items,setItems]=useState([]);const[form,setForm]=useState(blank);const[editing,setEditing]=useState("");const[busy,setBusy]=useState(false);const[msg,setMsg]=useState("");const[err,setErr]=useState("");
-async function api(url,opts={}){const r=await fetch(url,{...opts,headers:{...(opts.body&&typeof opts.body==="string"?{"Content-Type":"application/json"}:{}),...(opts.headers||{})}});const d=await r.json();if(r.status===401){router.replace("/admin/login");throw Error("Please sign in again.")}if(!r.ok)throw Error(d.error||"Request failed");return d}
-async function load(){try{const d=await api("/api/admin/products");setItems(d.items||[])}catch(e){setErr(e.message)}}useEffect(()=>{load()},[]);
-function edit(p){setEditing(p._id);setForm({...blank,...p,images:p.images||[]});setMsg("");setErr("");window.scrollTo({top:0,behavior:"smooth"})}function fresh(){setEditing("");setForm(blank);setMsg("");setErr("")}
-function change(k,v){setForm(f=>({...f,[k]:v,...(k==="title"&&!editing&&f.slug===""?{slug:v.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}: {})}))}
-async function upload(e){const files=Array.from(e.target.files||[]);if(!files.length)return;setBusy(true);setErr("");try{const fd=new FormData();files.forEach(f=>fd.append("files",f));const d=await api("/api/admin/media",{method:"POST",body:fd});const urls=(d.items||[]).filter(x=>x.type==="image").map(x=>x.url);setForm(f=>({...f,images:[...f.images,...urls],image:f.image||urls[0]||""}));setMsg("Images uploaded. Save the product to keep changes.")}catch(e){setErr(e.message)}finally{setBusy(false);e.target.value=""}}
-async function save(e){e.preventDefault();setBusy(true);setErr("");setMsg("");try{const payload={...form,slug:form.slug||form.title,images:form.images.length?form.images:(form.image?[form.image]:[])};const d=await api(editing?`/api/admin/products/${editing}`:"/api/admin/products",{method:editing?"PUT":"POST",body:JSON.stringify(payload)});setMsg("Product saved successfully.");setForm({...blank,...d.item,images:d.item.images||[]});setEditing(d.item._id);await load()}catch(e){setErr(e.message)}finally{setBusy(false)}}
-async function remove(p){if(!window.confirm(`Delete “${p.title}”? This cannot be undone.`))return;setErr("");try{await api(`/api/admin/products/${p._id}`,{method:"DELETE"});if(editing===p._id)fresh();setItems(a=>a.filter(x=>x._id!==p._id));setMsg("Product deleted.")}catch(e){setErr(e.message)}}
-return <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 md:px-8"><div className="mx-auto max-w-7xl"><Link href="/admin/dashboard" className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-800"><ArrowLeft size={17}/> Back to dashboard</Link><div className="my-6 flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-cyan-700">OVETA CMS</p><h1 className="mt-2 text-3xl font-semibold">Product management</h1><p className="mt-2 text-sm text-slate-600">Create and manage catalogue products, image galleries, visibility and SEO metadata.</p></div><button onClick={fresh} className="inline-flex items-center gap-2 rounded-xl bg-[#061a2b] px-4 py-3 text-sm font-semibold text-white"><Plus size={17}/> Add product</button></div>{err&&<p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{err}</p>}{msg&&<p className="mb-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700">{msg}</p>}
-<form onSubmit={save} className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-7"><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-semibold">{editing?"Edit product":"New product"}</h2><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.published!==false} onChange={e=>change("published",e.target.checked)}/><span>{form.published!==false?<Eye size={16}/>:<EyeOff size={16}/>} Published</span></label></div><div className="grid gap-4 md:grid-cols-2">{fields.map(([key,label])=><label key={key} className={`block text-sm font-medium text-slate-700 ${["summary","description","seoDescription"].includes(key)?"md:col-span-2":""}`}>{label}{["summary","description","seoDescription"].includes(key)?<textarea rows={key==="description"?5:3} value={form[key]||""} onChange={e=>change(key,e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none focus:border-cyan-600"/>:<input value={form[key]||""} onChange={e=>change(key,e.target.value)} required={key==="title"} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none focus:border-cyan-600"/>}</label>)}<label className="block text-sm font-medium text-slate-700">Upload product images<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple onChange={upload} className="mt-2 block w-full text-sm"/><span className="mt-1 block text-xs text-slate-500">Select multiple images. Uploads use the existing authenticated media endpoint.</span></label><label className="block text-sm font-medium text-slate-700">Gallery image URLs<textarea rows={4} value={(form.images||[]).join("\n")} onChange={e=>{const images=e.target.value.split("\n").map(x=>x.trim()).filter(Boolean);setForm(f=>({...f,images,image:f.image||images[0]||""}))}} placeholder="One image URL per line" className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none focus:border-cyan-600"/></label></div>{form.images?.length>0&&<div className="mt-4 flex flex-wrap gap-2">{form.images.map((url,i)=><div key={`${url}-${i}`} className="rounded-lg bg-slate-100 px-3 py-2 text-xs"><span className="mr-2 break-all">{url}</span><button type="button" onClick={()=>setForm(f=>({...f,images:f.images.filter((_,j)=>i!==j),image:f.image===url?(f.images.find((x,j)=>j!==i)||""):f.image}))} className="font-bold text-red-600">Remove</button></div>)}</div>}<div className="mt-6 flex flex-wrap gap-3"><button disabled={busy} className="inline-flex items-center gap-2 rounded-xl bg-[#061a2b] px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"><Save size={16}/>{busy?"Working…":editing?"Save product":"Create product"}</button><button type="button" onClick={fresh} className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Clear form</button></div></form>
-<section className="rounded-2xl border border-slate-200 bg-white p-5 md:p-7"><div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold">Catalogue products</h2><span className="text-sm text-slate-500">{items.length} total</span></div><div className="divide-y divide-slate-100">{items.map(p=><article key={p._id} className="flex flex-wrap items-center justify-between gap-3 py-4"><div className="min-w-0"><p className="font-semibold">{p.title}</p><p className="mt-1 text-xs text-slate-500">/{p.slug} · {p.category} · {p.published===false?"Draft":"Published"} · {(p.images||[]).length|| (p.image?1:0)} image(s)</p></div><div className="flex gap-2"><button onClick={()=>edit(p)} className="rounded-lg border border-slate-200 px-3 py-2 text-sm">Edit</button><button onClick={()=>remove(p)} className="rounded-lg border border-red-100 px-3 py-2 text-sm text-red-700"><Trash2 size={15}/></button></div></article>)}{!items.length&&<p className="py-8 text-sm text-slate-500">No database products yet. Existing catalogue products remain on the public site until you add managed products.</p>}</div></section></div></main>}
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  Plus,
+  Save,
+  Trash2,
+  Upload,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+const blank = {
+  title: "",
+  slug: "",
+  category: "Industrial Valves",
+  summary: "",
+  description: "",
+  image: "",
+  images: [],
+  standards: "",
+  materials: "",
+  rating: "",
+  sizes: "",
+  seoTitle: "",
+  seoDescription: "",
+  published: true,
+  sortOrder: 0,
+};
+const fields = [
+  ["title", "Product name"],
+  ["slug", "URL slug"],
+  ["category", "Category"],
+  ["summary", "Short description"],
+  ["description", "Full description"],
+  ["image", "Primary image URL"],
+  ["standards", "Standards"],
+  ["materials", "Materials"],
+  ["rating", "Pressure / rating"],
+  ["sizes", "Available sizes"],
+  ["seoTitle", "SEO title"],
+  ["seoDescription", "SEO description"],
+];
+export default function AdminProductsPage() {
+  const router = useRouter();
+  const [items, setItems] = useState([]);
+  const [form, setForm] = useState(blank);
+  const [editing, setEditing] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  async function api(url, opts = {}) {
+    const r = await fetch(url, {
+      ...opts,
+      headers: {
+        ...(opts.body && typeof opts.body === "string"
+          ? { "Content-Type": "application/json" }
+          : {}),
+        ...(opts.headers || {}),
+      },
+    });
+    const d = await r.json();
+    if (r.status === 401) {
+      router.replace("/admin/login");
+      throw Error("Please sign in again.");
+    }
+    if (!r.ok) throw Error(d.error || "Request failed");
+    return d;
+  }
+  async function load() {
+    try {
+      const d = await api("/api/admin/products");
+      setItems(d.items || []);
+    } catch (e) {
+      setErr(e.message);
+    }
+  }
+  useEffect(() => {
+    load();
+  }, []);
+  function edit(p) {
+    setEditing(p._id);
+    setForm({ ...blank, ...p, images: p.images || [] });
+    setMsg("");
+    setErr("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function fresh() {
+    setEditing("");
+    setForm(blank);
+    setMsg("");
+    setErr("");
+  }
+  function change(k, v) {
+    setForm((f) => ({
+      ...f,
+      [k]: v,
+      ...(k === "title" && !editing && f.slug === ""
+        ? {
+            slug: v
+              .toLowerCase()
+              .trim()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-|-$/g, ""),
+          }
+        : {}),
+    }));
+  }
+  async function upload(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setBusy(true);
+    setErr("");
+    try {
+      const fd = new FormData();
+      files.forEach((f) => fd.append("files", f));
+      const d = await api("/api/admin/media", { method: "POST", body: fd });
+      const urls = (d.items || [])
+        .filter((x) => x.type === "image")
+        .map((x) => x.url);
+      setForm((f) => ({
+        ...f,
+        images: [...f.images, ...urls],
+        image: f.image || urls[0] || "",
+      }));
+      setMsg("Images uploaded. Save the product to keep changes.");
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy(false);
+      e.target.value = "";
+    }
+  }
+  async function save(e) {
+    e.preventDefault();
+    setBusy(true);
+    setErr("");
+    setMsg("");
+    try {
+      const payload = {
+        ...form,
+        slug: form.slug || form.title,
+        images: form.images.length
+          ? form.images
+          : form.image
+            ? [form.image]
+            : [],
+      };
+      const d = await api(
+        editing ? `/api/admin/products/${editing}` : "/api/admin/products",
+        { method: editing ? "PUT" : "POST", body: JSON.stringify(payload) },
+      );
+      setMsg("Product saved successfully.");
+      setForm({ ...blank, ...d.item, images: d.item.images || [] });
+      setEditing(d.item._id);
+      await load();
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function remove(p) {
+    if (!window.confirm(`Delete “${p.title}”? This cannot be undone.`)) return;
+    setErr("");
+    try {
+      await api(`/api/admin/products/${p._id}`, { method: "DELETE" });
+      if (editing === p._id) fresh();
+      setItems((a) => a.filter((x) => x._id !== p._id));
+      setMsg("Product deleted.");
+    } catch (e) {
+      setErr(e.message);
+    }
+  }
+  return (
+    <main className="min-h-screen bg-slate-50 px-4 py-6 pt-40 text-slate-900 md:px-8">
+      <div className="mx-auto max-w-7xl">
+        <Link
+          href="/admin/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-800"
+        >
+          <ArrowLeft size={17} /> Back to dashboard
+        </Link>
+        <div className="my-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.2em] text-cyan-700">
+              OVETA CMS
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold">Product management</h1>
+            <p className="mt-2 text-sm text-slate-600">
+              Create and manage catalogue products, image galleries, visibility
+              and SEO metadata.
+            </p>
+          </div>
+          <button
+            onClick={fresh}
+            className="inline-flex items-center gap-2 rounded-xl bg-[#061a2b] px-4 py-3 text-sm font-semibold text-white"
+          >
+            <Plus size={17} /> Add product
+          </button>
+        </div>
+        {err && (
+          <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">
+            {err}
+          </p>
+        )}
+        {msg && (
+          <p className="mb-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700">
+            {msg}
+          </p>
+        )}
+        <form
+          onSubmit={save}
+          className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-7"
+        >
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">
+              {editing ? "Edit product" : "New product"}
+            </h2>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.published !== false}
+                onChange={(e) => change("published", e.target.checked)}
+              />
+              <span>
+                {form.published !== false ? (
+                  <Eye size={16} />
+                ) : (
+                  <EyeOff size={16} />
+                )}{" "}
+                Published
+              </span>
+            </label>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {fields.map(([key, label]) => (
+              <label
+                key={key}
+                className={`block text-sm font-medium text-slate-700 ${["summary", "description", "seoDescription"].includes(key) ? "md:col-span-2" : ""}`}
+              >
+                {label}
+                {["summary", "description", "seoDescription"].includes(key) ? (
+                  <textarea
+                    rows={key === "description" ? 5 : 3}
+                    value={form[key] || ""}
+                    onChange={(e) => change(key, e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none focus:border-cyan-600"
+                  />
+                ) : (
+                  <input
+                    value={form[key] || ""}
+                    onChange={(e) => change(key, e.target.value)}
+                    required={key === "title"}
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none focus:border-cyan-600"
+                  />
+                )}
+              </label>
+            ))}
+            <label className="block text-sm font-medium text-slate-700">
+              Upload product images
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/avif"
+                multiple
+                onChange={upload}
+                className="mt-2 block w-full text-sm"
+              />
+              <span className="mt-1 block text-xs text-slate-500">
+                Select multiple images. Uploads use the existing authenticated
+                media endpoint.
+              </span>
+            </label>
+            <label className="block text-sm font-medium text-slate-700">
+              Gallery image URLs
+              <textarea
+                rows={4}
+                value={(form.images || []).join("\n")}
+                onChange={(e) => {
+                  const images = e.target.value
+                    .split("\n")
+                    .map((x) => x.trim())
+                    .filter(Boolean);
+                  setForm((f) => ({
+                    ...f,
+                    images,
+                    image: f.image || images[0] || "",
+                  }));
+                }}
+                placeholder="One image URL per line"
+                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none focus:border-cyan-600"
+              />
+            </label>
+          </div>
+          {form.images?.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {form.images.map((url, i) => (
+                <div
+                  key={`${url}-${i}`}
+                  className="rounded-lg bg-slate-100 px-3 py-2 text-xs"
+                >
+                  <span className="mr-2 break-all">{url}</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((f) => ({
+                        ...f,
+                        images: f.images.filter((_, j) => i !== j),
+                        image:
+                          f.image === url
+                            ? f.images.find((x, j) => j !== i) || ""
+                            : f.image,
+                      }))
+                    }
+                    className="font-bold text-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#061a2b] px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              <Save size={16} />
+              {busy ? "Working…" : editing ? "Save product" : "Create product"}
+            </button>
+            <button
+              type="button"
+              onClick={fresh}
+              className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold"
+            >
+              Clear form
+            </button>
+          </div>
+        </form>
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 md:p-7">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Catalogue products</h2>
+            <span className="text-sm text-slate-500">{items.length} total</span>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {items.map((p) => (
+              <article
+                key={p._id}
+                className="flex flex-wrap items-center justify-between gap-3 py-4"
+              >
+                <div className="min-w-0">
+                  <p className="font-semibold">{p.title}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    /{p.slug} · {p.category} ·{" "}
+                    {p.published === false ? "Draft" : "Published"} ·{" "}
+                    {(p.images || []).length || (p.image ? 1 : 0)} image(s)
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => edit(p)}
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => remove(p)}
+                    className="rounded-lg border border-red-100 px-3 py-2 text-sm text-red-700"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </article>
+            ))}
+            {!items.length && (
+              <p className="py-8 text-sm text-slate-500">
+                No database products yet. Existing catalogue products remain on
+                the public site until you add managed products.
+              </p>
+            )}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}

@@ -131,7 +131,7 @@ export default async function ProductDetailPage({ params }) {
   );
 
   return (
-    <main className="min-h-screen bg-[#f4f7f9] pb-20 pt-28 md:pt-36">
+    <main className="min-h-screen bg-[#f4f7f9] pb-20 pt-40 md:pt-36">
       <div className="container-butterfly mx-auto">
         <Link
           href="/products"
