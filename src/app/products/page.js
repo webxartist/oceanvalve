@@ -8,9 +8,9 @@ import Product from "@/models/Product";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Industrial Valves & Products | OVETA",
+  title: "Industrial Valves & Products | OCEAN",
   description:
-    "Explore OVETA industrial valves, flow-control products, strainers, flanges and fittings.",
+    "Explore OCEAN industrial valves, flow-control products, strainers, flanges and fittings.",
 };
 
 function createSlug(title = "") {
@@ -38,7 +38,7 @@ async function getProducts() {
       }));
     }
   } catch (error) {
-    console.error("Unable to load OVETA products:", error);
+    console.error("Unable to load OCEAN products:", error);
   }
 
   return catalogueProducts.map((p, i) => ({

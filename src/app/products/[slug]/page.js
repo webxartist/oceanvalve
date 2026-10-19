@@ -49,7 +49,7 @@ async function getProduct(slug) {
       return normalizeProduct(p, slug);
     }
   } catch (error) {
-    console.error("Unable to load OVETA product:", error);
+    console.error("Unable to load OCEAN product:", error);
   }
 
   // Catalogue fallback for products without database records.
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }) {
 
   if (!p) {
     return {
-      title: "Product Not Found | OVETA",
+      title: "Product Not Found | OCEAN",
       robots: { index: false, follow: false },
     };
   }
@@ -87,18 +87,18 @@ export async function generateMetadata({ params }) {
     p.seoDescription ||
     p.summary ||
     p.description ||
-    `Explore ${p.title} from OVETA. Contact our team for product specifications and availability.`;
+    `Explore ${p.title} from OCEAN. Contact our team for product specifications and availability.`;
 
   const image = p.image || p.images?.[0];
 
   return {
-    title: p.seoTitle || `${p.title} | OVETA Industrial Valves`,
+    title: p.seoTitle || `${p.title} | OCEAN Industrial Valves`,
     description,
     alternates: {
       canonical: `/products/${p.slug}`,
     },
     openGraph: {
-      title: p.seoTitle || `${p.title} | OVETA Industrial Valves`,
+      title: p.seoTitle || `${p.title} | OCEAN Industrial Valves`,
       description,
       url: `/products/${p.slug}`,
       type: "website",

@@ -278,7 +278,7 @@ export default async function HomePage() {
                   <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-gradient-to-br from-[#f7fafb] to-[#e4edf2]">
                     <Image
                       src={image}
-                      alt={`${product.title} - OVETA industrial product`}
+                      alt={`${product.title} - OCEAN industrial product`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                       className="object-contain p-1 transition-transform duration-500 group-hover:scale-105"
@@ -341,7 +341,7 @@ export default async function HomePage() {
               !settings.aboutBody.toLowerCase().includes("butterfly") &&
               !settings.aboutBody.toLowerCase().includes("homes")
                 ? settings.aboutBody
-                : "Ocean Valves & Equipments, known by its trademark OVETA, has developed experience in industrial valves, fittings and instrumentation solutions. The catalogue highlights customer-specific valves for demanding services, including corrosive fluids, high temperatures and cryogenic service up to -196°C."}
+                : "Ocean Valves & Equipments, known by its trademark OCEAN, has developed experience in industrial valves, fittings and instrumentation solutions. The catalogue highlights customer-specific valves for demanding services, including corrosive fluids, high temperatures and cryogenic service up to -196°C."}
             </p>
 
             <Link

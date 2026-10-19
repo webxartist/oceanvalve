@@ -17,7 +17,7 @@ const defaults = {
   tagline: "Innovation. Integrity. Performance.",
   heroTitle: "Engineered for critical flow.",
   heroDescription:
-    "OVETA industrial valves and flow-control solutions engineered for demanding applications.",
+    "OCEAN industrial valves and flow-control solutions engineered for demanding applications.",
   heroImage: "/images/hero-valve-1.jpg",
   heroSlides: [],
   trustedBrands: [],
@@ -30,8 +30,8 @@ const defaults = {
     "Industrial valves, fittings and flow-control solutions for demanding applications.",
   aboutTitle: "Masters in Valve Technology.",
   aboutBody:
-    "Ocean Valves & Equipments, known by the trademark OVETA, supplies industrial valves, fittings and instrumentation solutions for demanding services.",
-  seoTitle: "Ocean Valves & Equipments | OVETA Industrial Valves",
+    "Ocean Valves & Equipments, known by the trademark OCEAN, supplies industrial valves, fittings and instrumentation solutions for demanding services.",
+  seoTitle: "OCEAN Valves & Equipments | OCEAN Industrial Valves",
   seoDescription:
     "Explore OVETA industrial valves, flow-control products and pipeline fittings from Ocean Valves & Equipments.",
   canonicalBaseUrl: "",
@@ -195,7 +195,7 @@ export default function AdminDashboardPage() {
             Ocean <span className="text-cyan-300">Valves</span>
           </strong>
           <span className="mt-1 block text-xs text-white/50">
-            OVETA website administration
+            OCEAN website administration
           </span>
         </Link>
         <nav className="space-y-2">
@@ -240,7 +240,7 @@ export default function AdminDashboardPage() {
         <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur md:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-700">
-              OVETA control centre
+              OCEAN control centre
             </p>
             <h1 className="mt-1 text-xl font-semibold">
               {tab === "content"

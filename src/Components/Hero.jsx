@@ -10,7 +10,7 @@ const fallback = [
     description:
       "Industrial valve solutions built around performance, reliability and demanding process requirements.",
     image: "/images/hero-valve-1.jpg",
-    eyebrow: "OVETA · INDUSTRIAL VALVES",
+    eyebrow: "OCEAN · INDUSTRIAL VALVES",
   },
   {
     title: "Precision in every connection.",
@@ -64,7 +64,7 @@ export default function Hero({ settings = {} }) {
           >
             <Image
               src={slide.image || fallback[0].image}
-              alt={slide.title || "OVETA industrial valve solution"}
+              alt={slide.title || "OCEAN industrial valve solution"}
               fill
               priority
               sizes="100vw"
@@ -88,7 +88,7 @@ export default function Hero({ settings = {} }) {
           >
             <p className="mb-7 flex items-center gap-3 text-xs font-bold uppercase tracking-[.28em] text-cyan-300">
               <span className="h-px w-10 bg-cyan-300" />
-              {slide.eyebrow || "OVETA · FLOW CONTROL"}
+              {slide.eyebrow || "OCEAN · FLOW CONTROL"}
             </p>
             <h1 className="max-w-3xl text-5xl font-semibold leading-[1.04] tracking-[-.04em] md:text-7xl">
               {slide.title || "Engineered for critical flow."}
