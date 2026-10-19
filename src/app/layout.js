@@ -19,7 +19,7 @@ export const metadata = {
     siteName: "Ocean Valves & Equipments",
     title: "Ocean Valves & Equipments | Industrial Valve Solutions",
     description:
-      "Explore OVETA valves, flow-control products and industrial pipeline accessories.",
+      "Explore OCEAN valves, flow-control products and industrial pipeline accessories.",
   },
   twitter: { card: "summary_large_image" },
   applicationName: "Ocean Valves & Equipments",
