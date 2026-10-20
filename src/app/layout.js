@@ -15,6 +15,9 @@ export const metadata = {
   },
   description:
     "Explore industrial valves, flow-control products and pipeline fittings from Ocean Valves & Equipments.",
+  verification: {
+    google: "gHzwModJeZUzTgQb3XutPeXrPXJMVsdcmbK1MoIMaeA",
+  },
   openGraph: {
     type: "website",
     siteName: "Ocean Valves & Equipments",
